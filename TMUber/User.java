@@ -1,7 +1,7 @@
-/* 
+/* Rabiya Aziz
  * Class that simulates a user of a simple Uber app
  * 
- * 
+ * Everything has been done for you except equals() method
  */
 public class User 
 {
@@ -74,12 +74,12 @@ public class User
 
   public void decrementDelivery()
   {
-    this.deliveries--;
+    this.deliveries-=1;
   }
 
   public void decrementRide()
   {
-    this.rides --;
+    this.rides -=1;
   }
   
   // Pay for the cost of the service
@@ -97,15 +97,13 @@ public class User
   /*
    * Two users are equal if they have the same name and address.
    * This method is overriding the inherited method in superclass Object
-   * 
    */
   public boolean equals(Object other)
   {
-    if (other == null) return false;
-    
-
-    else {
-      User Other = (User) other;
-      return this.getName().equals(Other.getName()) && this.getAddress().equals(Other.getAddress());}
+    // First I cast other into a User object
+    // Then I check whether both objects have the same name and address
+    // If they do, method returns true, if they don't, method returns false
+    User user = (User) other;
+    return this.getName().equals(user.getName()) && this.getAddress().equals(user.getAddress());
   }
 }
