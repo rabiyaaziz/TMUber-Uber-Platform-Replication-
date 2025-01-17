@@ -1,4 +1,4 @@
-/* 
+/* Rabiya Aziz
  * General class that simulates a ride or a delivery in a simple Uber app
  * 
  * This class is made abstract since we never create an object. We only create subclass objects. 
@@ -6,11 +6,10 @@
  * Implement the Comparable interface and compare two service requests based on the distance
  */
 
-import java.util.Comparator;
+ import java.util.Comparator;
 
-abstract public class TMUberService  implements Comparable<TMUberService>
+abstract public class TMUberService  implements Comparable<TMUberService> // Implementing comparable interface
 {
-  private Driver driver;   
   private String from;
   private String to;
   private User user;
@@ -18,9 +17,8 @@ abstract public class TMUberService  implements Comparable<TMUberService>
   private int distance; // Units are City Blocks
   private double cost;  // Cost of the service
   
-  public TMUberService(Driver driver, String from, String to, User user, int distance, double cost, String type)
+  public TMUberService(String from, String to, User user, int distance, double cost, String type)
   {
-    this.driver = driver;
     this.from = from;
     this.to = to;
     this.user = user;
@@ -34,14 +32,8 @@ abstract public class TMUberService  implements Comparable<TMUberService>
   abstract public String getServiceType();
 
   // Getters and Setters
-  public Driver getDriver()
-  {
-    return driver;
-  }
-  public void setDriver(Driver driver)
-  {
-    this.driver = driver;
-  }
+
+  
   public String getFrom()
   {
     return from;
@@ -83,39 +75,46 @@ abstract public class TMUberService  implements Comparable<TMUberService>
     this.cost = cost;
   }
 
-  // Compare 2 service requests based on distance
-  // Add the appropriate method
+  // Compares 2 service requests based on distance
   
     public int compareTo(TMUberService other)
     {
+      // Returns 1 if distance > other distance
+      // Returns -1 if distance < other distance
+      // Returns 0 if both distances are equal
 
-      if (this.getDistance() > other.getDistance()) return 1;
-      else if (this.getDistance() < other.getDistance()) return -1;
+      if (this.getDistance() > other.getDistance()) 
+      {
+        return 1;
+      }  
+      else if (this.getDistance() < other.getDistance()) 
+      {
+        return -1;
+      }
+        
       else return 0;
 
     }
-    
-  
- 
   
   // Check if 2 service requests are equal (this and other)
   // They are equal if its the same type and the same user
-  // Make sure to check the type first
+
   public boolean equals(Object other)
   {
-    // Fill in the code
-    TMUberService Other = (TMUberService) other;
 
-    return this.getServiceType()==Other.getServiceType() && this.getUser()==Other.getUser();
+    // First I casted other into a TMUberService object
+    // Then I checked whether both have the same service type AND user
+    // If so, then method returns true
+    TMUberService service = (TMUberService) other;
+
+    return this.getServiceType() == service.getServiceType() && this.getUser() == service.getUser();
   }
   
   // Print Information 
   public void printInfo()
   {
-    System.out.printf("\nType: %-9s From: %-15s To: %-15s", type, from, to);
+    System.out.printf("\nType: %-9s From: %-15s To: %-15s Zone: %-15s", type, from, to, CityMap.getCityZone(from));
     System.out.print("\nUser: ");
     user.printInfo();
-    System.out.print("\nDriver: ");
-    driver.printInfo();
   }
 }
