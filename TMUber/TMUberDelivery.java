@@ -1,10 +1,10 @@
-/* 
+/* Rabiya Aziz
  * This class simulates a food delivery service for a simple Uber app
  * 
  * A TMUberDelivery is-a TMUberService with some extra functionality
  */
-
 import java.util.Objects;
+
 
 public class TMUberDelivery extends TMUberService
 {
@@ -14,12 +14,11 @@ public class TMUberDelivery extends TMUberService
   private String foodOrderId;
    
    // Constructor to initialize all inherited and new instance variables 
-  public TMUberDelivery(Driver driver, String from, String to, User user, int distance, double cost,
+  public TMUberDelivery(String from, String to, User user, int distance, double cost,
                         String restaurant, String order)
   {
     // Fill in the code - make use of the super method
-    super(driver, from, to, user, distance, cost, TYPENAME);
-
+    super(from, to, user, distance, cost, TYPENAME);
     this.restaurant = restaurant;
     this.foodOrderId = order;
   }
@@ -54,24 +53,26 @@ public class TMUberDelivery extends TMUberService
     // First check to see if other is a Delivery type
     // Cast other to a TMUService reference and check type
     // If not a delivery, return false
-    TMUberService Other = (TMUberService) other;
+    // If this and other are deliveries, check to see if they are equal
 
-    if (Other.getServiceType()!="DELIVERY" || this.getServiceType()!= "DELIVERY") {return false;}
+    TMUberService service = (TMUberService) other;
+
+    if (service.getServiceType()!="DELIVERY" || this.getServiceType()!= "DELIVERY") {return false;}
 
     TMUberDelivery delivery =   (TMUberDelivery) other;
     
     return Objects.equals(this.getRestaurant(), delivery.getRestaurant()) && Objects.equals(this.getFoodOrderId(), delivery.getFoodOrderId());
 
-    // If this and other are deliveries, check to see if they are equal
   }
   /*
    * Print Information about a Delivery Request
    */
   public void printInfo()
   {
-    // Fill in the code
     // Use inheritance to first print info about a basic service request
-    super.printInfo();
+
+    super.printInfo(); // Used the printInfo method of the super class
+    
     // Then print specific subclass info
     System.out.printf("\nRestaurant: %-9s Food Order #: %-3s", restaurant, foodOrderId); 
   }
