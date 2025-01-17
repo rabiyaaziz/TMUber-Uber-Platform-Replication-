@@ -1,10 +1,10 @@
-/* 
+/* Rabiya Aziz
  * This class simulates a car driver in a simple uber app 
  * 
+ * Everything has been done for you except the equals() method
  */
 
 import java.util.Objects;
-
 public class Driver
 {
   private String id;
@@ -13,12 +13,16 @@ public class Driver
   private String licensePlate;
   private double wallet;
   private String type;
+  private int zone;
+  private TMUberService service;
+  private String address;
+
   
   public static enum Status {AVAILABLE, DRIVING};
   private Status status;
     
   
-  public Driver(String id, String name, String carModel, String licensePlate)
+  public Driver(String id, String name, String carModel, String licensePlate, String address)
   {
     this.id = id;
     this.name = name;
@@ -26,13 +30,18 @@ public class Driver
     this.licensePlate = licensePlate;
     this.status = Status.AVAILABLE;
     this.wallet = 0;
+    this.address = address;
+    this.zone = CityMap.getCityZone(address);
     this.type = "";
+    this.service = null;
   }
   // Print Information about a driver
   public void printInfo()
   {
     System.out.printf("Id: %-3s Name: %-15s Car Model: %-15s License Plate: %-10s Wallet: %2.2f", 
                       id, name, carModel, licensePlate, wallet);
+    System.out.printf(" Status: %-15s Address: %-15s Zone: %-3s ", status, address, zone );
+      
   }
   // Getters and Setters
   public String getType()
@@ -91,19 +100,45 @@ public class Driver
   {
     this.wallet = wallet;
   }
+  public TMUberService getService ()
+  {
+    return this.service;
+  }
+  public void setService(TMUberService service)
+  {
+    this.service = service;
+  }
+
+  public String getAddress ()
+  {
+    return address;
+  }
+  public void setAddress (String address)
+  {
+    this.address = address;
+  }
+  public int getZone()
+  {
+    return zone;
+  }
+  public void setZone(int zone)
+  {
+    this.zone = zone;
+  }
   /*
    * Two drivers are equal if they have the same name and license plates.
    * This method is overriding the inherited method in superclass Object
    * 
+   * Fill in the code 
    */
   public boolean equals(Object other)
-  {
-
-    if (other == null) return false;
+  {    
+    // First I casted other into a Driver object
+    // Then to check if they're equal I used the .equals function to compare both the names and license plates
     
-    Driver Other  = (Driver) other;
+    Driver driver  = (Driver) other;
 
-    return Objects.equals(this.name, Other.name) && Objects.equals(this.licensePlate, Other.licensePlate);
+    return Objects.equals(this.name, driver.name) && Objects.equals(this.licensePlate, driver.licensePlate);
   }
   
   // A driver earns a fee for every ride or delivery
