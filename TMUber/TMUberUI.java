@@ -1,17 +1,18 @@
+// Rabiya Aziz
+// Simulation of a Simple Command-line based Uber App 
+
+// This system supports "ride sharing" service and a delivery service
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-// Simulation of a Simple Command-line based Uber App 
-
-// This system supports "ride sharing" service and a delivery service
-
 public class TMUberUI
 {
   public static void main(String[] args)
   {
-    //  the System Manager - the main system code is in here 
+    // Create the System Manager - the main system code is in here 
 
     TMUberSystemManager tmuber = new TMUberSystemManager();
     
@@ -21,8 +22,10 @@ public class TMUberUI
     // Process keyboard actions
     while (scanner.hasNextLine())
     {
-      String action = scanner.nextLine();
 
+    
+      String action = scanner.nextLine();
+    try {
       if (action == null || action.equals("")) 
       {
         System.out.print("\n>");
@@ -39,7 +42,7 @@ public class TMUberUI
       // Print all the registered users
       else if (action.equalsIgnoreCase("USERS"))  // List all users
       {
-        tmuber.listAllUsers(); 
+        tmuber.listAllUsers(tmuber.getUserList()); 
       }
       // Print all current ride requests or delivery requests
       else if (action.equalsIgnoreCase("REQUESTS"))  // List all requests
@@ -67,9 +70,14 @@ public class TMUberUI
         {
           license = scanner.nextLine();
         }
-        if (!tmuber.registerNewDriver(name, carModel, license))
-          System.out.println(tmuber.getErrorMessage()); 
-        else
+        String address = "";
+        System.out.println("Address: ");
+        if (scanner.hasNextLine())
+        {
+          address = scanner.nextLine();
+        }
+        tmuber.registerNewDriver(name, carModel, license, address );
+          System.out.println(""); 
           System.out.printf("Driver: %-15s Car Model: %-15s License Plate: %-10s", name, carModel, license);
       }
       // Register a new user
@@ -94,15 +102,13 @@ public class TMUberUI
           wallet = scanner.nextDouble();
           scanner.nextLine(); // consume nl!! Only needed when mixing strings and int/double
         }
-        if (!tmuber.registerNewUser(name, address, wallet))
-          System.out.println(tmuber.getErrorMessage());  
-        else
+        tmuber.registerNewUser(name, address, wallet);
           System.out.printf("User: %-15s Address: %-15s Wallet: %2.2f", name, address, wallet);
       }
       // Request a ride
       else if (action.equalsIgnoreCase("REQRIDE")) 
       {
-        // Get the following information from the user 
+        // Get the following information from the user (on separate lines)
         // Then use the TMUberSystemManager requestRide() method properly to make a ride request
         // "User Account Id: "      (string)
         // "From Address: "         (string)
@@ -128,11 +134,10 @@ public class TMUberUI
       }
 
 
-      if (!tmuber.requestRide(id, from_address, to_address)) 
-        {System.out.println(tmuber.getErrorMessage());}
-      
-      else
-        {System.out.printf("RIDE for: %-15s From Address: %-15s To Address: %-15s", tmuber.getUser(id).getName(), from_address, to_address);}}
+    tmuber.requestRide(id, from_address, to_address);
+     System.out.printf("RIDE for: %-15s From: %-15s To: %-15s", tmuber.getUser(id).getName(), from_address, to_address);
+        
+      }
 
       // Request a food delivery
       else if (action.equalsIgnoreCase("REQDLVY")) 
@@ -176,13 +181,11 @@ public class TMUberUI
     {
       order = scanner.nextLine();
 
-  }
+    }
 
-      if (!tmuber.requestDelivery(id, from_address, to_address, restaurant, order)) 
-        {System.out.println(tmuber.getErrorMessage());}
-      
-      else
-        {System.out.printf("DELIVERY for: %-15s From Address: %-15s To Address: %-15s", tmuber.getUser(id).getName(), from_address, to_address);}
+      tmuber.requestDelivery(id, from_address, to_address, restaurant, order);
+      System.out.printf("DELIVERY for: %-15s From: %-15s To: %-15s", tmuber.getUser(id).getName(), from_address, to_address);
+        
       }
       
       // Sort users by name
@@ -196,10 +199,7 @@ public class TMUberUI
         tmuber.sortByWallet();
       }
       // Sort current service requests (ride or delivery) by distance
-      else if (action.equalsIgnoreCase("SORTBYDIST")) 
-      {
-        tmuber.sortByDistance();
-      }
+      
       // Cancel a current service (ride or delivery) request
       else if (action.equalsIgnoreCase("CANCELREQ")) 
       {
@@ -210,25 +210,29 @@ public class TMUberUI
           request = scanner.nextInt();
           scanner.nextLine(); // consume nl character
         }
-        if (!tmuber.cancelServiceRequest(request))
-          System.out.println(tmuber.getErrorMessage());  
-        else
-          System.out.println("Service request #" + request + " cancelled");
+        int zone = -1;
+        System.out.print("Zone #: ");
+        if (scanner.hasNextInt())
+        {
+          zone = scanner.nextInt();
+          scanner.nextLine(); // consume nl character
+        }
+
+        tmuber.cancelServiceRequest(request, zone);
+        System.out.println("Service request #" + request + " cancelled");
       }
       // Drop-off the user or the food delivery to the destination address
       else if (action.equalsIgnoreCase("DROPOFF")) 
       {
-        int request = -1;
-        System.out.print("Request #: ");
+        String driverId = "";
+        System.out.print("Driver ID: ");
         if (scanner.hasNextInt())
         {
-          request = scanner.nextInt();
+          driverId = scanner.next();
           scanner.nextLine(); // consume nl
         }
-        if (!tmuber.dropOff(request))
-          System.out.println(tmuber.getErrorMessage());  
-        else
-          System.out.println("Successful Drop Off - Service request #" + request + " complete");
+        tmuber.dropOff(driverId);
+          System.out.println("Driver " + driverId + " Dropping off");
       }
       // Get the Current Total Revenues
       else if (action.equalsIgnoreCase("REVENUES")) 
@@ -268,8 +272,78 @@ public class TMUberUI
         System.out.print("\nFrom: " + from + " To: " + to);
         System.out.println("\nDistance: " + CityMap.getDistance(from, to) + " City Blocks");
       }
-      
+      else if (action.equalsIgnoreCase("PICKUP"))
+      {
+        String driverID = "";
+        System.out.print("Driver ID: ");
+        if (scanner.hasNextLine())
+
+        {
+          driverID = scanner.nextLine();
+        }
+        tmuber.pickup(driverID);
+        Driver driver = tmuber.getDriver(driverID);
+        System.out.println("Driver " + driverID + " Picking Up in Zone " + driver.getZone());
+      }
+
+      else if (action.equalsIgnoreCase("DRIVETO"))
+      {
+        String driverID = "";
+        System.out.println("Driver Id: ");
+        if (scanner.hasNextLine())
+        {
+          driverID = scanner.nextLine();
+        }
+        System.out.println("Address: ");
+
+        String address = "";
+
+        if (scanner.hasNextLine())
+        {
+          address = scanner.nextLine();
+        }
+        
+        tmuber.driveTo(driverID, address);
+        System.out.println("Driver " + driverID + " Now in Zone " + CityMap.getCityZone(address));
+      }
+      else if (action.equalsIgnoreCase("LOADUSERS"))
+      {
+        String filename = "";
+        System.out.println("User File: ");
+        if (scanner.hasNextLine())
+        {
+          filename = scanner.nextLine();
+        }
+    
+        try {tmuber.setUsers(TMUberRegistered.loadPreregisteredUsers(filename));}
+        catch(FileNotFoundException e) { System.out.println("Users File:" + filename + " Not Found"); continue;}         
+        System.out.println("Users Loaded");
+      }
+
+      else if (action.equalsIgnoreCase("LOADDRIVERS"))
+      {
+        String filename = "";
+        System.out.println("Drivers File: ");
+
+        if (scanner.hasNextLine())
+        {
+          filename = scanner.nextLine();
+        }
+  
+          try {tmuber.setDrivers(TMUberRegistered.loadPreregisteredDrivers(filename));}
+          catch (FileNotFoundException e) { System.out.println("Drivers File: " + filename + " Not Found"); continue;}
+          System.out.println("Drivers Loaded");
+
+      }
+     
       System.out.print("\n>");
+
+    } 
+    
+    // Catches any exceptions thrown (except File not found, thats handled inside the try block so they can try again), prints the corresponding message, then continues the loop for the next input 
+    catch ( UserNotFoundException | UserExistsException | DriverNotFoundException | DriverExistsException | DriverUnavailableException | InvalidAddressException | InsufficientFundsException | InsufficientDistanceException | ServiceExistsException | IllegalArgumentException | IncompleteRequestException e) 
+    { System.out.println(e.getMessage()); continue;}
+
     }
   }
 }
